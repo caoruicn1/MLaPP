@@ -3,6 +3,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from pmtk3.data_tool import load_data
+from pmtk3.toolbox.decision_theory import zero_one_loss_fn
 from pmtk3.toolbox.supervised_model import naive_bayes
 from pmtk3.stats import mutual_info
 
@@ -11,15 +12,25 @@ def main():
     data = load_data('XwindowsDocData')
     Xtrain = data['xtrain']
     ytrain = np.ravel(data['ytrain'])
+    Xtest = data['xtest']
+    ytest = data['ytest']
     vocab = [o[0] for o in data['vocab']]
 
-    # train a model
+    # train and test a model
     model = naive_bayes.fit(Xtrain, ytrain)
+    ypred_train = naive_bayes.predict(model, Xtrain)
+    err_train = np.mean(zero_one_loss_fn(ytrain, ypred_train))
+    ypred_test = naive_bayes.predict(model, Xtest)
+    err_test = np.mean(zero_one_loss_fn(ytest, ypred_test))
+    print ('misclassification rates on train = {:5.2f} pc, on test = {:5.2f} pc'
+           .format(err_train * 100., err_test * 100))
+    print
+    
+    # visualize
     for idx, theta in enumerate(model.theta):
         plt.figure(idx)
         plt.plot(theta)
         plt.title('p(x_j=1|y={})'.format(idx+1))
-
     #plt.show()
 
     # top n words

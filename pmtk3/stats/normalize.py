@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 
-def normalize(X, axis=None):
+def normalize(X, axis=None, nargout=1):
     """Normalize an array (i.e., sum to one).
 
     If axis is not given, normalize the whole array to one.  If axis
@@ -21,4 +21,6 @@ def normalize(X, axis=None):
         else:
             raise RuntimeError('only 2d array allowed')
 
-    return normed, z
+    if nargout == 2:
+        return normed, z
+    return normed

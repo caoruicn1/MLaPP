@@ -51,3 +51,31 @@ def fit(Xtrain, ytrain, pseudo_count=1):
     model.theta = theta
 
     return model
+
+
+def predict(model, Xtest, nargout=1):
+    # only implementing "vectorized" case
+    eps = np.spacing(1)
+    Ntest = Xtest.shape[0]
+    theta = model.theta
+    C = theta.shape[0]
+    log_prior = np.log(model.class_prior + eps)
+    log_theta = np.log(theta + eps)
+    log_theta_not = np.log(1. - theta + eps)
+    Xtest = Xtest.toarray().astype(int)
+    XtestNot = np.logical_not(Xtest).astype(int)
+
+    log_posterior = np.zeros((Ntest, C))
+    for c in range(0, C):
+        L1 = log_theta[c,:] * Xtest
+        L0 = log_theta_not[c,:] * XtestNot
+        log_posterior[:,c] = (L1 + L0).sum(axis=1) + log_prior[c]
+
+    yhat = log_posterior.argmax(axis=1)
+
+    if nargout == 1:
+        return yhat
+    if nargout == 2:
+        raise NotImplemented
+        #py = np.exp(normalize_logspace(log_posterior))
+        return yhat, py

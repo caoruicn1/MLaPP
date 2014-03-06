@@ -6,7 +6,7 @@ from pmtk3.toolbox.supervised_model import naive_bayes
 
 def class_features_binary(X, y):
     model = naive_bayes.fit(X, y)
-    py, z = model.class_prior
+    py = model.class_prior
     pxy = model.theta
     C, D = pxy.shape
 
